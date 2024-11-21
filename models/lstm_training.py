@@ -1,21 +1,16 @@
+#---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# Library imports
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.basemap import Basemap
-import netCDF4 as nc
-import pandas as pd
-from sklearn.metrics import mean_absolute_error
-import seaborn as sns
-import cmocean as cmo
-import keras
 import os
-import imageio.v2 as imageio
 from keras.models import Sequential
 from keras.layers import Dense, LSTM
-import sys
-sys.path.append("/Users/ferran/Library/CloudStorage/GoogleDrive-ferran.hernandez@isardsat.cat/My Drive/phd/seaice_emission")
-from sice_empirical import sice_empirical # type: ignore
-
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that loads the training data for the LSTM model
+Inputs: path_maps - path to the maps
+Outputs: data - input maps
+"""
 def load_lstm_training_data(path_maps):
     # Load input maps and extract the variables
     maps_dir = np.sort(os.listdir(path_maps))
@@ -41,13 +36,26 @@ def load_lstm_training_data(path_maps):
     data = np.transpose(data0, (1, 0, 2))
     return data
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
-def data_preparation_lstm(data, initial_map, timesteps, features):
+"""
+Function that prepares the data for the LSTM model
+Inputs: data - input maps
+Outputs: input - input maps for training
+         output - output maps for training
+"""
+def data_preparation_lstm(data):
     # Shift the dataset to include previous day information
     input = data[:, 0 : data.shape[1] - 1, :]
     output = data[:, 1 : data.shape[1], -1]
     output = np.expand_dims(output, axis=-1)
     return input, output
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that filters the training data for the LSTM model
+Inputs: input_train - input maps for training
+        output_train - output maps for training
+Outputs: input_train - filtered input maps for training
+         output_train - filtered output maps for training
+"""
 def filter_lstm_training_data(input_train, output_train):
     # Create boolean masks for input_train and output_train
     mask_input = np.any(input_train != 0, axis=(1, 2))
@@ -59,7 +67,12 @@ def filter_lstm_training_data(input_train, output_train):
     output_train = output_train[mask]
     return input_train, output_train
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
-def lstm_model():
+"""
+Function that creates the LSTM model
+Inputs: input_train - input maps for training
+Outputs: model - LSTM model
+"""
+def lstm_model(input_train):
     # Model construction
     model = Sequential()
     model.add(LSTM(5, input_shape=(input_train.shape[1], input_train.shape[2]), activation='tanh', recurrent_activation='sigmoid', return_sequences=True))
@@ -69,6 +82,17 @@ def lstm_model():
     model.compile(loss='mae', optimizer='adam')    
     return model
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that trains the LSTM model
+Inputs: model - LSTM model
+        input_train - input maps for training
+        output_train - output maps for training
+        epochs - number of epochs
+        batch_size - batch size
+        save - boolean to save the model
+        save_path - path to save the model
+Outputs: None
+"""
 def lstm_train(model, input_train, output_train, epochs, batch_size, save, save_path):
     # Train the model
     history = model.fit(input_train, output_train, epochs = epochs, batch_size = batch_size, verbose=2)

@@ -5,6 +5,14 @@ import matplotlib.pyplot as plt
 import os
 import keras
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that loads the training data for the CNN model
+Inputs: path_maps - path to the maps
+         input - list to store the input maps
+         dices - list to store the output maps
+Outputs: input - list with the input maps
+         dices - list with the output maps
+"""
 def load_cnn_training_data(path_maps, input, dices):
     # Load input maps and extract the variables
     maps_dir = np.sort(os.listdir(path_maps))
@@ -18,6 +26,11 @@ def load_cnn_training_data(path_maps, input, dices):
         dices.append(np.stack([input_map[0,:,:]], axis=2))
     return input, dices
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that creates the CNN model
+Inputs: None
+Outputs: model - CNN model
+"""
 def cnn_model():
     # Model construction
     input_shape = (896, 608, 4)
@@ -40,6 +53,17 @@ def cnn_model():
     model.compile(optimizer='adam', loss='mean_absolute_error', metrics=['mae'])    
     return model
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that trains the CNN model
+Inputs: model - CNN model
+        input_train - input maps for training
+        output_train - output maps for training
+        epochs - number of epochs
+        batch_size - batch size
+        save - boolean to save the model
+        save_path - path to save the model
+Outputs: None
+"""
 def cnn_train(model, input_train, output_train, epochs, batch_size, save, save_path):
     # Train the model
     history = model.fit(input_train, output_train, epochs = epochs, batch_size = batch_size, verbose=2)

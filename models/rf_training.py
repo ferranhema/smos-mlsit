@@ -6,6 +6,12 @@ import netCDF4 as nc
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function to load the training data for the RF algorithm from the input maps
+Inputs: maps_path_1 - path to the input maps for the first year
+        maps_path_2 - path to the input maps for the second year
+Outputs: data_train_burke - training data for the RF algorithm
+"""
 def get_training_data(maps_path_1, maps_path_2):
     # Load input maps
     maps_dir = np.sort(os.listdir(str(maps_path_1)))
@@ -65,6 +71,12 @@ def get_training_data(maps_path_1, maps_path_2):
 
     return data_train_burke
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function to train the RF algorithm
+Inputs: maps_path_1 - path to the input maps for the first year
+        maps_path_2 - path to the input maps for the second year
+Outputs: rf - trained RF algorithm
+"""
 def rf_train(maps_path_1, maps_path_2):
     # Load training data
     data_train_burke = get_training_data(maps_path_1, maps_path_2)

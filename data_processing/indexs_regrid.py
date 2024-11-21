@@ -2,9 +2,15 @@
 # Library imports
 import numpy as np
 import netCDF4 as nc
-import pandas as pd
-import sys
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that computes the haversine distance between two points on the Earth's surface.
+Inputs: lat1 - latitude of the first point
+        lon1 - longitude of the first point
+        lat2 - latitude of the second point
+        lon2 - longitude of the second point
+Outputs: d - haversine distance between the two points
+"""
 def haversine_distance(lat1, lon1, lat2, lon2):
     R = 6371e3
     t1 = lat1 * (np.pi/180)
@@ -18,6 +24,16 @@ def haversine_distance(lat1, lon1, lat2, lon2):
     d = R * c # in m
     return d
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------#
+"""
+Function that computes the indexes of the closest pixels in the SMOS grid for the pixels in the TOPAZ, TSURF and SIC grids. These indexes are used to regrid the data and make them comparable.
+Inputs: path_topaz - path to the TOPAZ file
+         path_tsurf - path to the TSURF file
+         path_smos - path to the SMOS file
+         path_sic - path to the SIC file
+Outputs: indexs_topaz - indexes of the closest pixels in the SMOS grid for the pixels in the TOPAZ grid
+          indexs_tsurf - indexes of the closest pixels in the SMOS grid for the pixels in the TSURF grid
+          indexs_sic - indexes of the closest pixels in the SMOS grid for the pixels in the SIC grid
+"""
 def indexs_regrid(path_topaz, path_tsurf, path_smos, path_sic):
     # Load data - these files may be downloades from public and open sources
     file_topaz=str(path_topaz)
